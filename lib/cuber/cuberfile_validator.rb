@@ -23,7 +23,7 @@ module Cuber
       validate_health
       validate_lb
       validate_ingress
-      validate_cluster_ip
+      validate_host
       validate_ssl
       @errors
     end
@@ -105,7 +105,7 @@ module Cuber
         @errors << "env \"#{key}\" name can only include uppercase letters, digits or underscores" if key !~ /\A[A-Z_]+[A-Z0-9_]*\z/
       end
     end
-    
+
     def validate_health
       return unless @options[:health]
       @errors << 'health checks must be an http url' unless URI.parse(@options[:health]).kind_of? URI::HTTP
@@ -122,15 +122,15 @@ module Cuber
       @errors << 'ingress must be true or false' if @options[:ingress] != true && @options[:ingress] != false
     end
 
-    def validate_cluster_ip
-      return unless @options[:cluster_ip]
-      @errors << 'cluster_ip must be true or false' if @options[:cluster_ip] != true && @options[:cluster_ip] != false
+    def validate_host
+      @errors << 'host cannot be empty' if @options[:host].nil? && @options[:host].empty?
     end
 
     def validate_ssl
       return unless @options[:ssl]
-      @errors << 'ssl crt must be a file' unless File.exist? @options[:ssl][:crt]
-      @errors << 'ssl key must be a file' unless File.exist? @options[:ssl][:key]
+      @errors << 'ssl crt must be a file' unless @options[:ssl][:secret_name] && File.exist?(@options[:ssl][:crt])
+      @errors << 'ssl key must be a file' unless @options[:ssl][:secret_name] && File.exist?(@options[:ssl][:key])
+      @options << 'ssl secret cannot be empty' if @options[:ssl][:secret_name]&.empty?
     end
 
   end

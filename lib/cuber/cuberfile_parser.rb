@@ -19,7 +19,7 @@ module Cuber
       @lb = {}
       @ingress = nil
       @ssl = nil
-      @cluster_ip = nil
+      @host = nil
     end
 
     def method_missing m, *args
@@ -90,12 +90,12 @@ module Cuber
       @ingress = enabled
     end
 
-    def cluster_ip enabled
-      @cluster_ip = enabled
+    def host host
+      @host = host
     end
 
-    def ssl crt, key
-      @ssl = { crt: crt, key: key }
+    def ssl crt = nil, key = nil, secret_name: nil
+      @ssl = { crt: crt, key: key, secret_name: secret_name }
     end
   end
 end
