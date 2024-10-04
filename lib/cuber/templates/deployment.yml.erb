@@ -100,22 +100,22 @@ spec:
         app.kubernetes.io/managed-by: cuber
     spec:
       containers:
-      - name: migration
-        image: <%= @options[:image] %>:<%= @options[:release] %>
-        imagePullPolicy: Always
+        - name: migration
+          image: <%= @options[:image] %>:<%= @options[:release] %>
+          imagePullPolicy: Always
         <%- if @options[:buildpacks] -%>
-        command: ["launcher"]
-        args: <%= @options[:migrate][:cmd].shellsplit %>
+          command: ["launcher"]
+          args: <%= @options[:migrate][:cmd].shellsplit %>
         <%- else -%>
-        command: <%= @options[:migrate][:cmd].shellsplit %>
+          command: <%= @options[:migrate][:cmd].shellsplit %>
         <%- end -%>
-        envFrom:
-        - configMapRef:
-            name: env
-        - secretRef:
-            name: app-secrets
+          envFrom:
+            - configMapRef:
+                name: env
+            - secretRef:
+                name: app-secrets
       imagePullSecrets:
-      - name: regcred
+        - name: regcred
       restartPolicy: Never
 <%- end -%>
 
@@ -152,78 +152,78 @@ spec:
         app: <%= procname %>-proc
     spec:
       containers:
-      - name: <%= procname %>-proc
-        image: <%= @options[:image] %>:<%= @options[:release] %>
-        imagePullPolicy: Always
+        - name: <%= procname %>-proc
+          image: <%= @options[:image] %>:<%= @options[:release] %>
+          imagePullPolicy: Always
         <%- if @options[:buildpacks] -%>
-        command: ["launcher"]
-        args: <%= proc[:cmd].shellsplit %>
+          command: ["launcher"]
+          args: <%= proc[:cmd].shellsplit %>
         <%- else -%>
-        command: <%= proc[:cmd].shellsplit %>
+          command: <%= proc[:cmd].shellsplit %>
         <%- end -%>
-        resources:
-          requests:
+          resources:
+            requests:
             <%- if proc[:cpu] -%>
-            cpu: <%= proc[:cpu] %>
+              cpu: <%= proc[:cpu] %>
             <%- end -%>
             <%- if proc[:ram] -%>
-            memory: <%= proc[:ram] %>Gi
+              memory: <%= proc[:ram] %>Gi
             <%- end -%>
-          limits:
+            limits:
             <%- if proc[:ram] -%>
-            memory: <%= proc[:ram] %>Gi
+              memory: <%= proc[:ram] %>Gi
             <%- end -%>
-        envFrom:
-        - configMapRef:
-            name: env
-        - secretRef:
-            name: app-secrets
-        env:
+          envFrom:
+            - configMapRef:
+                name: env
+            - secretRef:
+                name: app-secrets
+          env:
         <%- proc[:env].each do |key, value| -%>
-        - name: <%= key %>
-          value: <%= value.to_s.to_json %>
+            - name: <%= key %>
+              value: <%= value.to_s.to_json %>
         <%- end -%>
         <%- if procname.to_s == 'web' -%>
-        - name: PORT
-          value: "8080"
-        ports:
-        - containerPort: 8080
+            - name: PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080
         <%- end -%>
         <%- if procname.to_s == 'web' && @options[:health] -%>
-        readinessProbe:
-          httpGet:
-            port: 8080
-            path: <%= URI.parse(@options[:health]).path.to_json %>
-            httpHeaders:
-              - name: Host
-                value: <%= URI.parse(@options[:health]).host.to_json %>
-              - name: X-Forwarded-Proto
-                value: <%= URI.parse(@options[:health]).scheme.to_json %>
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: <%= URI.parse(@options[:health]).path.to_json %>
+              httpHeaders:
+                - name: Host
+                  value: <%= URI.parse(@options[:health]).host.to_json %>
+                - name: X-Forwarded-Proto
+                  value: <%= URI.parse(@options[:health]).scheme.to_json %>
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
         <%- end -%>
       <%- if @options[:migrate] && @options[:migrate][:check] -%>
       initContainers:
-      - name: migration-check
-        image: <%= @options[:image] %>:<%= @options[:release] %>
-        imagePullPolicy: Always
+        - name: migration-check
+          image: <%= @options[:image] %>:<%= @options[:release] %>
+          imagePullPolicy: Always
         <%- if @options[:buildpacks] -%>
-        command: ["launcher"]
-        args: <%= @options[:migrate][:check].shellsplit %>
+          command: ["launcher"]
+          args: <%= @options[:migrate][:check].shellsplit %>
         <%- else -%>
-        command: <%= @options[:migrate][:check].shellsplit %>
+          command: <%= @options[:migrate][:check].shellsplit %>
         <%- end -%>
-        envFrom:
-        - configMapRef:
-            name: env
-        - secretRef:
-            name: app-secrets
+          envFrom:
+            - configMapRef:
+                name: env
+            - secretRef:
+                name: app-secrets
       <%- end -%>
       imagePullSecrets:
-      - name: regcred
+        - name: regcred
       terminationGracePeriodSeconds: <%= proc[:term] %>
 <%- end -%>
 
@@ -247,12 +247,12 @@ spec:
   minReplicas: <%= proc[:scale].min %>
   maxReplicas: <%= proc[:scale].max %>
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 60
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
 <%- end -%>
 
 <%- @options[:cron].each do |jobname, cron| -%>
@@ -290,26 +290,26 @@ spec:
             app.kubernetes.io/managed-by: cuber
         spec:
           containers:
-          - name: task
-            image: <%= @options[:image] %>:<%= @options[:release] %>
-            imagePullPolicy: Always
+            - name: task
+              image: <%= @options[:image] %>:<%= @options[:release] %>
+              imagePullPolicy: Always
             <%- if @options[:buildpacks] -%>
-            command: ["launcher"]
-            args: <%= cron[:cmd].shellsplit %>
+              command: ["launcher"]
+              args: <%= cron[:cmd].shellsplit %>
             <%- else -%>
-            command: <%= cron[:cmd].shellsplit %>
+              command: <%= cron[:cmd].shellsplit %>
             <%- end -%>
-            envFrom:
-            - configMapRef:
-                name: env
-            - secretRef:
-                name: app-secrets
+              envFrom:
+                - configMapRef:
+                    name: env
+                - secretRef:
+                    name: app-secrets
           imagePullSecrets:
-          - name: regcred
+            - name: regcred
           restartPolicy: Never
 <%- end -%>
 
-<%- if @options[:ssl][:crt] && @options[:ssl][:key] -%>
+<%- if @options[:ssl] -%>
 ---
 apiVersion: v1
 kind: Secret
@@ -363,39 +363,33 @@ metadata:
     <%= key %>: <%= value.to_s.to_json %>
     <%- end -%>
 spec:
+  <%- if @options[:ssl] -%>
   tls:
-  <%- if @options[:ssl][:crt] && @options[:ssl][:key] -%>
     - secretName: ssl
-  <%- elsif @options[:ssl][:secret_name] -%>
-    - secretName: <%= @options[:ssl][:secret_name] %>
-    <%- if @options[:host] -%>
-      hosts:
-      - <%= @options[:host] %>
-    <%- end -%>
   <%- end -%>
   rules:
-  <%- if @options[:host] -%>
-  - host: <%= @options[:host] %>
-    http:
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: web-service
-              port:
-                number: 80
-  <%- else -%>
-  - http:
-    paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: web-service
-            port:
-              number: 80
-  <%- end -%>
+    <%- if @options[:host] -%>
+    - host: <%= @options[:host] %>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+    <%- else -%>
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+    <%- end -%>
 <%- else -%>
 ---
 apiVersion: v1
@@ -417,12 +411,12 @@ spec:
   selector:
     app: web-proc
   ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 8080
-  - name: https
-    protocol: TCP
-    port: 443
-    targetPort: 8080
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 8080
 <%- end -%>

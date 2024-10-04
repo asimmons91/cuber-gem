@@ -94,8 +94,8 @@ module Cuber
       @host = host
     end
 
-    def ssl crt = nil, key = nil, secret_name: nil
-      @ssl = { crt: crt, key: key, secret_name: secret_name }
+    def ssl crt, key
+      @ssl = { crt: crt, key: key }
     end
   end
 end

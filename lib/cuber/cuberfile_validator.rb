@@ -128,9 +128,8 @@ module Cuber
 
     def validate_ssl
       return unless @options[:ssl]
-      @errors << 'ssl crt must be a file' unless @options[:ssl][:secret_name] && File.exist?(@options[:ssl][:crt])
-      @errors << 'ssl key must be a file' unless @options[:ssl][:secret_name] && File.exist?(@options[:ssl][:key])
-      @options << 'ssl secret cannot be empty' if @options[:ssl][:secret_name]&.empty?
+      @errors << 'ssl crt must be a file' unless File.exist? @options[:ssl][:crt]
+      @errors << 'ssl key must be a file' unless File.exist? @options[:ssl][:key]
     end
 
   end
